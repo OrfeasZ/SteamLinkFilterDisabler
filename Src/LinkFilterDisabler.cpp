@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
 	bool s_Silent = FlagSet("--silent");
 	bool s_Retry = s_Silent || FlagSet("--retry");
 
-	SetConsoleTitleA("Steam Link Filter Disabler - v1.0");
+	SetConsoleTitleA("Steam Link Filter Disabler - v1.1");
 
 	// Print disclaimer.
 	printf("DISCLAIMER:\n");
