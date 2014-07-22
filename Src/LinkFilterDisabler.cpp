@@ -91,19 +91,39 @@ DWORD FindPattern(HANDLE p_Process, DWORD p_StartAddress, DWORD p_SearchLength, 
 	return NULL;
 }
 
-void ConfirmExit()
+void WaitForKeypress()
 {
-	printf("\nPress any key to exit...\n");
-
-	// Wait for keypress
 	while (!_kbhit())
 		Sleep(1);
 
 	_getch();
 }
 
+void ConfirmExit(bool b_silentMode)
+{
+	printf("\nPress any key to exit...\n");
+
+	// Wait for keypress
+	if (!b_silentMode)
+		WaitForKeypress();
+}
+
+bool CheckSilentMode(int argc, char* argv[])
+{
+	for (int i = 1; i < argc; ++i)
+	{
+		if (strcmp("--silent", argv[i]) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 int main(int argc, char* argv[])
 {
+	bool b_silentMode = CheckSilentMode(argc, argv);
+
 	SetConsoleTitleA("Steam Link Filter Disabler - v1.0");
 
 	// Print disclaimer.
@@ -117,10 +137,8 @@ int main(int argc, char* argv[])
 	printf("Press any key to confirm and continue...\n");
 
 	// Wait for keypress
-	while (!_kbhit())
-		Sleep(1);
-
-	_getch();
+	if (!b_silentMode)
+		WaitForKeypress();
 
 	// Clear the console
 	system("cls");
@@ -133,7 +151,7 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nPlease make sure Steam is running and try again.\n");
-		ConfirmExit();
+		ConfirmExit(b_silentMode);
 		return 1;
 	}
 
@@ -149,7 +167,7 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nFailed to open process. Please make sure you have the appropriate permissions and try again.\n");
-		ConfirmExit();
+		ConfirmExit(b_silentMode);
 		return 1;
 	}
 
@@ -159,7 +177,7 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nFailed to find friends module. Please make sure you are fully logged in and try again.\n");
-		ConfirmExit();
+		ConfirmExit(b_silentMode);
 		return 1;
 	}
 
@@ -177,7 +195,7 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nFailed to find patch address. Are you running an updated or already patched version?\n");
-		ConfirmExit();
+		ConfirmExit(b_silentMode);
 		return 1;
 	}
 
@@ -191,7 +209,7 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nFailed to patch. Please make sure you have the appropriate permissions and try again.\n");
-		ConfirmExit();
+		ConfirmExit(b_silentMode);
 		return 1;
 	}
 
@@ -202,9 +220,12 @@ int main(int argc, char* argv[])
 
 	// We're done here!
 	printf("Steam has been successfully patched!\n");
-	printf("Exiting in 5 seconds...\n");
-
-	Sleep(5000);
+	
+	if (!b_silentMode)
+	{
+		printf("Exiting in 5 seconds...\n");
+		Sleep(5000);
+	}
 
 	return 0;
 }
