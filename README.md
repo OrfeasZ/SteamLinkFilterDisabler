@@ -7,17 +7,31 @@ This includes both the in-client check (which causes delays in opening links), a
 
 ## Usage
 
-To use it, simply run it as an administrator and wait while it patches Steam.
+You can find compiled and packaged binaries (along with debug symbols) in the [Releases][1] section. 
+The only requirement to running the pre-built binaries is having the [Microsoft Visual C++ 2010 Redistributable package][2] installed.
+
+To use the app, simply run it as an administrator and wait while it patches Steam.
+You have to be logged in in order for this to work, since the target module (friendsui.dll) is only loaded after a successful login.
 
 You will have to re-patch Steam every time you launch it, since this is a simple in-memory patch.
-
 After Steam is patched, you should be able to click on any link sent on chat and have it open instantly!
 
-There are two launch flags available:
+The following launch flags are currently available:
 
-| **--retry**  	| Launches the app in silent mode, disabling the requirement for user input (also forces --retry). 	|
-|----------	|--------------------------------------------------------------------------------------------------	|
-| **--silent** 	| Launches the app in silent mode, disabling the requirement for user input (also forces --retry). 	|
+| Flag          | Description                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------ |
+| **--retry**   | Forces the app to automatically retry patching upon failure.                                     |
+| **--silent**  | Launches the app in silent mode, disabling the requirement for user input (also forces --retry). |
+
+## Building
+
+Visual Studio 2013 project files are included. 
+
+The project is currently set to build with the **MSVC100** compiler (VS 2010) for compatibility reasons.
+However, any compiler should work.
+
+To build, simply open **LinkFilterDisabler.sln** in Visual Studio and build.
+No external dependencies are needed.
 
 ## Disclaimer 
 
@@ -29,7 +43,9 @@ This software is in no way sponsored, endorsed, or supported by, or associated w
 
 ## Contributors
 
- - [Kevin Duchassin][1]
+ - [Kevin Duchassin][3]
 
 
-  [1]: https://github.com/Efuveo
+  [1]: https://github.com/OrfeasZ/SteamLinkFilterDisabler/releases
+  [2]: http://www.microsoft.com/en-us/download/details.aspx?id=5555
+  [3]: https://github.com/Efuveo
