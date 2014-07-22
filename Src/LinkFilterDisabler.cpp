@@ -99,30 +99,30 @@ void WaitForKeypress()
 	_getch();
 }
 
-void ConfirmExit(bool b_silentMode)
+void ConfirmExit(bool p_Silent)
 {
+	if (p_Silent)
+		return;
+
 	printf("\nPress any key to exit...\n");
 
 	// Wait for keypress
-	if (!b_silentMode)
-		WaitForKeypress();
+	WaitForKeypress();
 }
 
-bool CheckSilentMode(int argc, char* argv[])
+bool FlagSet(const char* p_Flag)
 {
-	for (int i = 1; i < argc; ++i)
-	{
-		if (strcmp("--silent", argv[i]) == 0)
-		{
+	for (int i = 1; i < __argc; ++i)
+		if (_stricmp(__argv[i], p_Flag) == 0)
 			return true;
-		}
-	}
+		
 	return false;
 }
 
 int main(int argc, char* argv[])
 {
-	bool b_silentMode = CheckSilentMode(argc, argv);
+	bool s_Silent = FlagSet("--silent");
+	bool s_Retry = s_Silent || FlagSet("--retry");
 
 	SetConsoleTitleA("Steam Link Filter Disabler - v1.0");
 
@@ -134,11 +134,13 @@ int main(int argc, char* argv[])
 	printf("You can find the source on GitHub at:\n");
 	printf("https://github.com/OrfeasZ/SteamLinkFilterDisabler\n\n");
 
-	printf("Press any key to confirm and continue...\n");
+	if (!s_Silent)
+	{
+		printf("Press any key to confirm and continue...\n");
 
-	// Wait for keypress
-	if (!b_silentMode)
+		// Wait for keypress
 		WaitForKeypress();
+	}
 
 	// Clear the console
 	system("cls");
@@ -147,12 +149,24 @@ int main(int argc, char* argv[])
 	printf("Locating Steam process... ");
 	DWORD s_ProcessID = FindProcessID("Steam.exe");
 
-	if (s_ProcessID == NULL)
+	if (s_ProcessID == NULL && !s_Retry)
 	{
 		printf("FAILED\n");
 		printf("\nPlease make sure Steam is running and try again.\n");
-		ConfirmExit(b_silentMode);
+		ConfirmExit(s_Silent);
 		return 1;
+	}
+
+	// Keep retrying every 2 seconds of the --retry flag is set.
+	while (s_ProcessID == NULL && s_Retry)
+	{
+		printf("FAILED\n");
+		printf("\nRetrying in 2 seconds...\n");
+
+		Sleep(2000);
+
+		printf("Locating Steam process... ");
+		s_ProcessID = FindProcessID("Steam.exe");
 	}
 
 	printf("DONE\n");
@@ -167,18 +181,30 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nFailed to open process. Please make sure you have the appropriate permissions and try again.\n");
-		ConfirmExit(b_silentMode);
+		ConfirmExit(s_Silent);
 		return 1;
 	}
 
 	HMODULE s_FriendsModule = FindModule(s_Process, "friendsui.dll");
 
-	if (s_FriendsModule == NULL)
+	if (s_FriendsModule == NULL && !s_Retry)
 	{
 		printf("FAILED\n");
 		printf("\nFailed to find friends module. Please make sure you are fully logged in and try again.\n");
-		ConfirmExit(b_silentMode);
+		ConfirmExit(s_Silent);
 		return 1;
+	}
+
+	// Keep retrying every 2 seconds of the --retry flag is set.
+	while (s_FriendsModule == NULL && s_Retry)
+	{
+		printf("FAILED\n");
+		printf("\nRetrying in 2 seconds...\n");
+
+		Sleep(2000);
+
+		printf("Finding friends module... ");
+		s_FriendsModule = FindModule(s_Process, "friendsui.dll");
 	}
 
 	printf("DONE\n");
@@ -195,7 +221,7 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nFailed to find patch address. Are you running an updated or already patched version?\n");
-		ConfirmExit(b_silentMode);
+		ConfirmExit(s_Silent);
 		return 1;
 	}
 
@@ -209,7 +235,7 @@ int main(int argc, char* argv[])
 	{
 		printf("FAILED\n");
 		printf("\nFailed to patch. Please make sure you have the appropriate permissions and try again.\n");
-		ConfirmExit(b_silentMode);
+		ConfirmExit(s_Silent);
 		return 1;
 	}
 
@@ -221,7 +247,7 @@ int main(int argc, char* argv[])
 	// We're done here!
 	printf("Steam has been successfully patched!\n");
 	
-	if (!b_silentMode)
+	if (!s_Silent)
 	{
 		printf("Exiting in 5 seconds...\n");
 		Sleep(5000);
