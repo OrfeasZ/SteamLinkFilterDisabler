@@ -7,6 +7,7 @@
 
 #include "stdafx.h"
 
+extern bool g_Ghost;
 extern bool g_Silent;
 extern bool g_Retry;
 

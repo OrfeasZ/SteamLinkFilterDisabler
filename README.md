@@ -22,6 +22,7 @@ The following launch flags are currently available:
 | ------------- | ------------------------------------------------------------------------------------------------ |
 | **--retry**   | Forces the app to automatically retry patching upon failure.                                     |
 | **--silent**  | Launches the app in silent mode, disabling the requirement for user input (also forces --retry). |
+| **--ghost**   | Launches the app in ghost mode, disabling the console window (also forces --silent).             |
 
 ## Building
 

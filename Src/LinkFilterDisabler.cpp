@@ -8,15 +8,21 @@
 #include "LinkFilterDisabler.h"
 #include "Util.h"
 
+bool g_Ghost = false;
 bool g_Retry = false;
 bool g_Silent = false;
 
 int main(int argc, char* argv[])
 {
-	g_Silent = FlagSet("--silent");
+	g_Ghost = FlagSet("--ghost");
+	g_Silent = g_Ghost || FlagSet("--silent");
 	g_Retry = g_Silent || FlagSet("--retry");
 
-	SetConsoleTitleA("Steam Link Filter Disabler - v1.1");
+	// We don't want a console in ghost mode.
+	if (g_Ghost)
+		FreeConsole();
+
+	SetConsoleTitleA("Steam Link Filter Disabler - v1.2");
 
 	// Print disclaimer.
 	printf("DISCLAIMER:\n");
