@@ -82,11 +82,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\LinkFilterDisabler.h" />
     <ClInclude Include="Src\stdafx.h" />
     <ClInclude Include="Src\targetver.h" />
+    <ClInclude Include="Src\Util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\LinkFilterDisabler.cpp" />
+    <ClCompile Include="Src\Util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
