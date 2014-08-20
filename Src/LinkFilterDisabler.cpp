@@ -133,7 +133,7 @@ int PatchFriendsUI(HANDLE p_Process, HMODULE p_FriendsModule)
 	// NOTE: This is slow. Could've been done better.
 	DWORD s_Address = FindPattern(p_Process, (DWORD)p_FriendsModule, 0x100000,
 		(PBYTE)"\x75\x10\x83\xC6\x00\x81\xFE\x00\x00\x00\x00\x72\xE5\x5F\x5E\x5B",
-		"xxxx?xx?xxxxxxxx");
+		"xxxx?xx????xxxxx");
 
 	if (s_Address == NULL)
 	{
